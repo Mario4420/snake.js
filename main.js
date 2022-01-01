@@ -25,7 +25,7 @@ function main(){
 			window.requestAnimationFrame(loop);
 		}
 		else {
-			console.log("bruh");
+			console.log("stop");
 		}
 	}); 
 }
