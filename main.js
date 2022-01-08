@@ -9,7 +9,7 @@ function main(){
 	let score = 0; 
 
 	const SNAKE_PART_SIZE = 40; 
-	const SNAKE_SPEED = 5;  
+	let snakeSpeed = 5;  
 	let snake = [[75, 75]]; 
 	const SNAKE_DIRS = {
   		UP: 0,
@@ -20,8 +20,7 @@ function main(){
 	let snakeCurDir = undefined; 
 
 	const FRUIT_SIZE = 40; 
-	let fruitX = Math.random() * (canvas.width - FRUIT_SIZE); 
-	let fruitY = Math.random() * (canvas.height - FRUIT_SIZE); 
+	[fruitX, fruitY] = generateFruitPos(FRUIT_SIZE); 
 
 	document.addEventListener('keydown', event => {
 		if(event.keyCode == 87){ 
@@ -39,8 +38,14 @@ function main(){
 	});
 
 	window.requestAnimationFrame(function loop(){
-		running = screen_collisions(snake, SNAKE_PART_SIZE, canvas); 
-		snakeMovement(snake, SNAKE_DIRS, snakeCurDir, SNAKE_SPEED); 
+		running = screenCollisions(snake, SNAKE_PART_SIZE, canvas); 
+		snakeMovement(snake, SNAKE_DIRS, snakeCurDir, snakeSpeed); 
+		if(snakeFruitCollision(snake, SNAKE_PART_SIZE, fruitX, fruitY, FRUIT_SIZE)){
+			score++; 
+			// array destructuring
+			[fruitX, fruitY] = generateFruitPos(FRUIT_SIZE); 
+			snakeSpeed++; 
+		}
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawSnake(snake, SNAKE_PART_SIZE, ctx); 
 		drawFruit(fruitX, fruitY, FRUIT_SIZE, ctx); 
@@ -81,7 +86,14 @@ function drawFruit(fruitX, fruitY, fruitSize, ctx){
 	ctx.fillRect(fruitX, fruitY, fruitSize, fruitSize);  
 }
 
-function screen_collisions(snake, snakePartSize, canvas){		
+function generateFruitPos(fruitSize){
+	return [
+		Math.random() * (canvas.width - fruitSize), 
+		Math.random() * (canvas.height - fruitSize)
+	]; 
+}
+
+function screenCollisions(snake, snakePartSize, canvas){		
 	if(snake[0][0] >= canvas.width-snakePartSize || snake[0][0] <= 0){
 		return false; 
 	}
@@ -91,7 +103,16 @@ function screen_collisions(snake, snakePartSize, canvas){
 	return true; 
 }
 
-function snake_fruit_collision(snake, snakePartSize, fruitX, fruitY, fruitSize){
+function snakeFruitCollision(snake, snakeHeadSize, fruitX, fruitY, fruitSize){
+	let snakeX = snake[0][0]; 
+	let snakeY = snake[0][1]; 
+	if(snakeX + snakeHeadSize >= fruitX &&
+	   snakeX <= fruitX + fruitSize &&
+	   snakeY + snakeHeadSize >= fruitY &&
+	   snakeY <= fruitY + fruitSize){ 
+		return true;
+	}
+	return false; 
 }
 
 main(); 
