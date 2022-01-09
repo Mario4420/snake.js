@@ -9,7 +9,7 @@ function main(){
 	let score = 0; 
 
 	const SNAKE_PART_SIZE = 40; 
-	let snakeSpeed = 5;  
+	let snakeSpeed = 6;  
 	let snake = [[75, 75]]; 
 	const SNAKE_DIRS = {
   		UP: 0,
@@ -21,6 +21,28 @@ function main(){
 
 	const FRUIT_SIZE = 40; 
 	[fruitX, fruitY] = generateFruitPos(FRUIT_SIZE); 
+
+	function loop(){
+		running = screenCollisions(snake, SNAKE_PART_SIZE, canvas); 
+		snakeMovement(snake, SNAKE_DIRS, snakeCurDir, snakeSpeed); 
+		if(snakeFruitCollision(snake, SNAKE_PART_SIZE, fruitX, fruitY, FRUIT_SIZE)){
+			score++; 
+			[fruitX, fruitY] = generateFruitPos(FRUIT_SIZE); 
+		}
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		drawSnake(snake, SNAKE_PART_SIZE, ctx); 
+		drawFruit(fruitX, fruitY, FRUIT_SIZE, ctx); 
+		document.getElementById("score").innerHTML = `Score: ${score}`; 
+		if(running){
+			window.requestAnimationFrame(loop);
+		}
+		else {
+			ctx.fillStyle = "#FFFFFF"; 
+			ctx.font = "75px Arial";
+			ctx.fillText("Game Over! Press Space to try again!", 85, canvas.height/2); 
+			running = false; 
+		}
+	}
 
 	document.addEventListener('keydown', event => {
 		if(event.keyCode == 87){ 
@@ -35,28 +57,15 @@ function main(){
 		if(event.keyCode == 68){
 			snakeCurDir = SNAKE_DIRS.RIGHT;
 		}
+		if(event.keyCode == 32){
+			if(!running){
+				[snake, snakeSpeed, snakeCurDir, fruitX, fruitY, score, running] = restart(FRUIT_SIZE); 
+				window.requestAnimationFrame(loop);
+			}
+		}
 	});
 
-	window.requestAnimationFrame(function loop(){
-		running = screenCollisions(snake, SNAKE_PART_SIZE, canvas); 
-		snakeMovement(snake, SNAKE_DIRS, snakeCurDir, snakeSpeed); 
-		if(snakeFruitCollision(snake, SNAKE_PART_SIZE, fruitX, fruitY, FRUIT_SIZE)){
-			// array destructuring
-			score++; 
-			[fruitX, fruitY] = generateFruitPos(FRUIT_SIZE); 
-			snakeSpeed = snakeAddSpeed(snakeSpeed); 
-		}
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawSnake(snake, SNAKE_PART_SIZE, ctx); 
-		drawFruit(fruitX, fruitY, FRUIT_SIZE, ctx); 
-		document.getElementById("score").innerHTML = `Score: ${score}`; 
-		if(running){
-			window.requestAnimationFrame(loop);
-		}
-		else {
-			{snake, snakeSpeed, snakeCurDir, fruitX, fruitY, score, running} = restart(FRUIT_SIZE); 
-		}
-	}); 
+	window.requestAnimationFrame(loop); 
 }
 
 function drawSnake(snake, snakePartSize, ctx){
@@ -126,15 +135,15 @@ function snakeFruitCollision(snake, snakeHeadSize, fruitX, fruitY, fruitSize){
 function restart(fruitSize){
 	fruitPos = generateFruitPos(fruitSize); 
 	//if(score > highscore)
-	return {
-		snake: [[75, 75]], 
-		snakeSpeed: 5,
-		snakeCurDir: undefined,
-		fruitX: fruitPos[0], 
-		fruitY: fruitPos[1], 
-		score: 0, 
-		running: true 
-	}; 
+	return [
+		[[75, 75]],   //snake(pos)
+		5,			  //snakeSpeed
+		undefined,	  //snakeCurDir
+		fruitPos[0],  //fruitX
+		fruitPos[1],  //fruitY
+		0, 			  //score
+		true 		  //running
+	]; 
 }
 
 main(); 
