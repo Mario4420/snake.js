@@ -41,19 +41,20 @@ function main(){
 		running = screenCollisions(snake, SNAKE_PART_SIZE, canvas); 
 		snakeMovement(snake, SNAKE_DIRS, snakeCurDir, snakeSpeed); 
 		if(snakeFruitCollision(snake, SNAKE_PART_SIZE, fruitX, fruitY, FRUIT_SIZE)){
-			score++; 
 			// array destructuring
+			score++; 
 			[fruitX, fruitY] = generateFruitPos(FRUIT_SIZE); 
-			snakeSpeed++; 
+			snakeSpeed = snakeAddSpeed(snakeSpeed); 
 		}
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawSnake(snake, SNAKE_PART_SIZE, ctx); 
 		drawFruit(fruitX, fruitY, FRUIT_SIZE, ctx); 
-		if(running === true){
+		document.getElementById("score").innerHTML = `Score: ${score}`; 
+		if(running){
 			window.requestAnimationFrame(loop);
 		}
 		else {
-			console.log("stop");
+			{snake, snakeSpeed, snakeCurDir, fruitX, fruitY, score, running} = restart(FRUIT_SIZE); 
 		}
 	}); 
 }
@@ -79,6 +80,13 @@ function snakeMovement(snake, snakeDirs, snakeCurDir, snakeSpeed){
 		return snake[0][0] += snakeSpeed; 
 	}
 	return snake
+}
+
+function snakeAddSpeed(snakeSpeed){
+	if(snakeSpeed <= 8){ 
+		return ++snakeSpeed; 
+	}
+	return snakeSpeed; 
 }
 
 function drawFruit(fruitX, fruitY, fruitSize, ctx){
@@ -115,6 +123,18 @@ function snakeFruitCollision(snake, snakeHeadSize, fruitX, fruitY, fruitSize){
 	return false; 
 }
 
+function restart(fruitSize){
+	fruitPos = generateFruitPos(fruitSize); 
+	//if(score > highscore)
+	return {
+		snake: [[75, 75]], 
+		snakeSpeed: 5,
+		snakeCurDir: undefined,
+		fruitX: fruitPos[0], 
+		fruitY: fruitPos[1], 
+		score: 0, 
+		running: true 
+	}; 
+}
+
 main(); 
-//ctx.fillStyle = "#FFF000"; 
-//ctx.fillRect(0, 0, 5, 5);  
