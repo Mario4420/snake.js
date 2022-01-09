@@ -40,6 +40,7 @@ function main(){
 			ctx.fillStyle = "#FFFFFF"; 
 			ctx.font = "75px Arial";
 			ctx.fillText("Game Over! Press Space to try again!", 85, canvas.height/2); 
+			document.getElementById("score").innerHTML = `Final Score: ${score}`; 
 			running = false; 
 		}
 	}
