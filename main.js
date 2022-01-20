@@ -27,6 +27,22 @@ function main(){
 		snakeMovement(snake, SNAKE_DIRS, snakeCurDir, snakeSpeed); 
 		if(snakeFruitCollision(snake, SNAKE_PART_SIZE, fruitX, fruitY, FRUIT_SIZE)){
 			score++; 
+			switch(snakeCurDir){
+				case SNAKE_DIRS.UP:
+					snake.push([snake[snake.length-1][0], snake[snake.length-1][1]]+SNAKE_PART_SIZE); 
+					break;
+				case SNAKE_DIRS.DOWN:
+					snake.push([snake[snake.length-1][0], snake[snake.length-1][1]]-SNAKE_PART_SIZE); 
+					break;
+				case SNAKE_DIRS.LEFT:
+					snake.push([snake[snake.length-1][0]+SNAKE_PART_SIZE, snake[snake.length-1][1]]); 
+					break;        
+				case SNAKE_DIRS.RIGHT:
+					snake.push([snake[snake.length-1][0]-SNAKE_PART_SIZE, snake[snake.length-1][1]]); 
+					break;
+				default:
+					break; 
+			}
 			[fruitX, fruitY] = generateFruitPos(FRUIT_SIZE); 
 		}
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -78,16 +94,24 @@ function drawSnake(snake, snakePartSize, ctx){
 
 function snakeMovement(snake, snakeDirs, snakeCurDir, snakeSpeed){
 	if(snakeCurDir == snakeDirs.UP){
-		return snake[0][1] -= snakeSpeed; 
+		snake.forEach(part => {
+			part[1] -= snakeSpeed; 
+		}); 
 	}
 	if(snakeCurDir == snakeDirs.DOWN){
-		return snake[0][1] += snakeSpeed; 
+		snake.forEach(part => {
+			part[1] += snakeSpeed; 
+		}); 
 	}
 	if(snakeCurDir == snakeDirs.LEFT){
-		return snake[0][0] -= snakeSpeed; 
+		snake.forEach(part => {
+			part[0] -= snakeSpeed; 
+		});
 	}
 	if(snakeCurDir == snakeDirs.RIGHT){
-		return snake[0][0] += snakeSpeed; 
+		snake.forEach(part => {
+			part[0] += snakeSpeed; 
+		}); 
 	}
 	return snake
 }
