@@ -29,16 +29,12 @@ function main(){
 			score++; 
 			switch(snakeCurDir){
 				case SNAKE_DIRS.UP:
-					snake.push([snake[snake.length-1][0], snake[snake.length-1][1]]+SNAKE_PART_SIZE); 
 					break;
 				case SNAKE_DIRS.DOWN:
-					snake.push([snake[snake.length-1][0], snake[snake.length-1][1]]-SNAKE_PART_SIZE); 
 					break;
 				case SNAKE_DIRS.LEFT:
-					snake.push([snake[snake.length-1][0]+SNAKE_PART_SIZE, snake[snake.length-1][1]]); 
 					break;        
 				case SNAKE_DIRS.RIGHT:
-					snake.push([snake[snake.length-1][0]-SNAKE_PART_SIZE, snake[snake.length-1][1]]); 
 					break;
 				default:
 					break; 
